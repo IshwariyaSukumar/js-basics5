@@ -80,7 +80,7 @@ citizenDetails=[{"id":1,"first_name":"Barrett","last_name":"Abbatini","email":"b
 {"id":80,"first_name":"Kira","last_name":"Abatelli","email":"kabatelli27@hhs.gov","gender":"Female","country":"Australia","income":27732},
 {"id":81,"first_name":"Ambrosio","last_name":"Penlington","email":"apenlington28@is.gd","gender":"Male","country":"China","income":37838},
 {"id":82,"first_name":"Felic","last_name":"Southern","email":"fsouthern29@woothemes.com","gender":"Male","country":"Australia","income":51143},
-{"id":83,"first_name":"Aurthur","last_name":"Tomei","email":"atomei2a@admin.ch","gender":"Male","country":"Portugal","income":"j"},
+{"id":83,"first_name":"Aurthur","last_name":"Tomei","email":"atomei2a@admin.ch","gender":"Male","country":"Portugal","income":12345},
 {"id":84,"first_name":"Kenton","last_name":"Broadist","email":"kbroadist2b@ucsd.edu","gender":"Male","country":"Australia","income":30136},
 {"id":85,"first_name":"Shandra","last_name":"Wharf","email":"swharf2c@surveymonkey.com","gender":"Female","country":"China","income":25395},
 {"id":86,"first_name":"North","last_name":"Jarnell","email":"njarnell2d@hexun.com","gender":"Male","country":"Australia","income":94350},
@@ -109,45 +109,48 @@ const country=[];
 })
 
 
-getHighestIncome(citizenDetails);
-getHighestIncomeCountry(citizenDetails,country);
+getHighestIncomeCountry(citizenDetails);
+getHighestCombinedIncomeCountry(citizenDetails,country);
 getUsersInfo(citizenDetails);
 getHighestFemaleIncomeCountry(citizenDetails,country);
 
 
 
-//1.find the highest income
-function getHighestIncome(citizenDetails){
-    let highestIncome=0;
-citizenDetails.forEach((detail)=>{
-   if(detail["income"]>highestIncome){
-    highestIncome=detail["income"];
-   }
-})
-console.log("Highest Income is "+highestIncome);
+//1.find the highest income country
+function getHighestIncomeCountry(citizenDetails){
+    let highestCountryIncome=0;
+    let highestIncomeCountry="";
+   citizenDetails.forEach((detail)=>{
+        if(detail["income"]>highestCountryIncome){
+            highestCountryIncome=detail["income"];
+            highestIncomeCountry=detail["country"];
+        }
+   })
+
+console.log("Highest Earning Person belongs to "+highestIncomeCountry);
 }
 
 
-//2.find the country with highest income
-function getHighestIncomeCountry(citizenDetails,country){
+//2.find the country with highest combined income
+function getHighestCombinedIncomeCountry(citizenDetails,country){
     
 
     let highestCountryIncome=0;
     let highestIncomeCountry="";
+
     for(let i=0; i<country.length; i++){
         let countryFiltered=citizenDetails.filter((detail)=>{   //filtering country wise
              return detail["country"]===country[i];
         })
 
-        let income=0;
+        let countryIncome=countryFiltered.map(detail=>detail.income)  //map
+        let totalIncome=countryIncome.reduce((acculumator,element)=>acculumator+element); //reduce
+        if(highestCountryIncome<totalIncome){
+            highestCountryIncome=totalIncome;
+            highestIncomeCountry=country[i];
+        }
 
-        countryFiltered.forEach((detail)=>{
-            income+=detail["income"];            //summing each country's income
-        })
-       if(income>highestCountryIncome){
-        highestCountryIncome=income;              //storing highest income
-        highestIncomeCountry=country[i];           //storing country name
-       }
+        
     }
     console.log("Country with highest income is "+highestIncomeCountry);
 }
@@ -174,15 +177,15 @@ function getHighestFemaleIncomeCountry(citizenDetails,country){
         let gender=detail.gender.toLowerCase();
         return detail["country"]===country[i] && gender==="female";
       })
-      let income=0;
 
-      filteredByCountry.forEach((detail)=>{
-          income+=detail["income"];            //summing each country's income
-      })
-     if(income>highestCountryIncome){
-      highestCountryIncome=income;              //storing highest income
-      highestIncomeCountry=country[i];           //storing country name
-     }
+      let countryIncome=filteredByCountry.map(detail=>detail.income)  //map
+      let totalIncome=countryIncome.reduce((acculumator,element)=>acculumator+element); //reduce
+
+      if(highestCountryIncome<totalIncome){
+          highestCountryIncome=totalIncome;
+          highestIncomeCountry=country[i];
+      }
+     
   }
   console.log("Country with highest female income is "+highestIncomeCountry);
    }
